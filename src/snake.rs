@@ -33,10 +33,10 @@ mod tests {
 
     #[test]
     fn it_creates_a_new_snake_with_body_parts() {
-	let snake = Snake::new(2, 2);
+        let snake = Snake::new(2, 2);
 
-	assert_eq!(snake.body_parts.len(), 1);
-	assert_eq!(snake.body_parts[0], (1, 1))
+        assert_eq!(snake.body_parts.len(), 1);
+        assert_eq!(snake.body_parts[0], (1, 1))
     }
 
     // TODO: add test cases to test for collisions

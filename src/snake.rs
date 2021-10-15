@@ -18,6 +18,10 @@ impl Snake {
         let (x, y) = self.body_parts[self.body_parts.len() - 1];
         self.body_parts.push((x + 1, y));
     }
+
+    pub fn take_health(&mut self) {
+        self.health -= 1;
+    }
 }
 
 #[cfg(test)]
@@ -40,10 +44,19 @@ mod tests {
     }
 
     // TODO: add test cases to test for collisions
+    #[test]
     fn it_adds_a_body_part_to_the_snake() {
         let mut snake = Snake::new(10, 10);
 
         snake.add_body_part();
         assert_eq!(snake.body_parts[snake.body_parts.len() - 1], (6, 5));
+    }
+
+    #[test]
+    fn it_takes_away_one_health_point() {
+        let mut snake = Snake::new(2, 2);
+        snake.take_health();
+
+        assert_eq!(snake.health, 2);
     }
 }

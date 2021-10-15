@@ -1,4 +1,5 @@
 pub mod snake;
+pub mod board;
 
 #[cfg(test)]
 mod tests {

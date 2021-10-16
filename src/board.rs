@@ -65,6 +65,7 @@ mod tests {
     }
 
     // TODO: make test metamorphic
+    #[test]
     fn it_creates_food() {
         let mut board = Board::new(10, 10);
         board.set_food();

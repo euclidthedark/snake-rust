@@ -1,3 +1,4 @@
+// TODO: make sure randome coordinates don't collide with others
 use rand::{thread_rng, Rng};
 
 pub struct Board {
@@ -22,6 +23,10 @@ impl Board {
 
     pub fn set_predator(&mut self) {
         self.predator = Some(self.generate_board_position());
+    }
+
+    pub fn set_food(&mut self) {
+        self.food = Some(self.generate_board_position());
     }
 
     fn generate_board_position(&self) -> (i32, i32) {
@@ -57,5 +62,13 @@ mod tests {
         board.set_predator();
 
         assert_ne!(board.predator, None);
+    }
+
+    // TODO: make test metamorphic
+    fn it_creates_food() {
+        let mut board = Board::new(10, 10);
+        board.set_food();
+
+        assert_ne!(board.food, None);
     }
 }

@@ -10,7 +10,6 @@ pub struct Board {
 }
 
 impl Board {
-
     pub fn new(max_x: i32, max_y: i32) -> Board {
         Board {
             max_x,

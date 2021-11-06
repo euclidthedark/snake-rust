@@ -1,6 +1,15 @@
+#[derive(PartialEq, Debug)]
+pub enum Orientiation {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
 pub struct Snake {
     health: u8,
     body: Vec<(i32, i32)>,
+    is_moving: Orientiation,
 }
 
 impl Snake {
@@ -9,6 +18,7 @@ impl Snake {
         Snake {
             health: 3,
             body: vec!((max_x / 2, max_y / 2)),
+            is_moving: Orientiation::Left,
         }
     }
 
@@ -51,6 +61,13 @@ mod tests {
         let snake = Snake::new(2, 2);
 
         assert_eq!(snake.body[0], (1, 1));
+    }
+
+    #[test]
+    fn it_creates_a_new_snake_that_is_moving_left() {
+        let snake = Snake::new(2, 2);
+
+        assert_eq!(snake.is_moving, Orientiation::Left);
     }
 
     // TODO: add test cases to test for collisions

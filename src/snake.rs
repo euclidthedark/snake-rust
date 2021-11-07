@@ -32,10 +32,6 @@ impl Snake {
     pub fn take_health(&mut self) {
         self.health -= 1;
     }
-
-    pub fn eat_food(&mut self) {
-        self.health += 1;
-    }
 }
 
 #[cfg(test)]
@@ -85,13 +81,5 @@ mod tests {
         snake.take_health();
 
         assert_eq!(snake.health, 2);
-    }
-
-    #[test]
-    fn it_eats_food() {
-        let mut snake = Snake::new(2, 2);
-        snake.eat_food();
-
-        assert_eq!(snake.health, 4);
     }
 }

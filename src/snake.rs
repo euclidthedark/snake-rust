@@ -10,6 +10,7 @@ pub struct Snake {
     health: u8,
     body: Vec<(i32, i32)>,
     is_moving: Orientiation,
+    food_eaten_count: u8,
 }
 
 impl Snake {
@@ -19,6 +20,7 @@ impl Snake {
             health: 3,
             body: vec!((max_x / 2, max_y / 2)),
             is_moving: Orientiation::Left,
+            food_eaten_count: 0,
         }
     }
 
@@ -34,7 +36,7 @@ impl Snake {
     }
 
     pub fn eat_food(&mut self) {
-        self.health += 1;
+        self.food_eaten_count += 1;
     }
 }
 
@@ -91,7 +93,8 @@ mod tests {
     fn it_eats_food() {
         let mut snake = Snake::new(2, 2);
         snake.eat_food();
+        snake.eat_food();
 
-        assert_eq!(snake.health, 4);
+        assert_eq!(snake.food_eaten_count, 2);
     }
 }

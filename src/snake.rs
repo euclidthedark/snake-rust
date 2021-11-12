@@ -9,23 +9,23 @@ pub enum Orientation {
 pub struct Snake {
     health: u8,
     body: Vec<(i32, i32)>,
-    is_moving: Orientation,
+    orientation: Orientation,
     food_eaten_count: u8,
 }
 
 impl Snake {
     pub fn new(max_x: i32, max_y: i32) -> Snake {
-	// TODO:: Only allow even numbers for coordinates
+	// TODO:: store max coordinates in memory
         Snake {
             health: 3,
             body: vec!((max_x / 2, max_y / 2)),
-            is_moving: Orientation::Left,
+            orientation: Orientation::Left,
             food_eaten_count: 0,
         }
     }
 
     pub fn redirect_orientation(&mut self, direction: Orientation) {
-        self.is_moving = direction;
+        self.orientation = direction;
     }
 
     /**
@@ -34,14 +34,14 @@ impl Snake {
      * the coordinate hash map
      */
 
-    pub fn add_body_part(&mut self) -> Option<()> {
+    pub fn add_body_part(&mut self) -> Option<(i32, i32)> {
         // TODO: perform a coordinate search to make sure body
         // part addition does not collide with other body parts
         let (x, y) = self.body[self.body.len() - 1];
 
-        if self.is_moving == Orientation::Left {
+        if self.orientation == Orientation::Left {
             self.body.push((x + 1, y));
-            return Some(());
+            return Some((x + 1, y));
         } else {
             return None;
         }
@@ -62,7 +62,7 @@ mod tests {
 
     #[test]
     fn it_creates_a_new_snake_with_correct_health() {
-        let snake = Snake::new(1, 1);
+        let snake = Snake::new(2, 2);
 
         assert_eq!(snake.health, 3);
     }
@@ -85,16 +85,15 @@ mod tests {
     fn it_creates_a_new_snake_that_is_moving_left() {
         let snake = Snake::new(2, 2);
 
-        assert_eq!(snake.is_moving, Orientation::Left);
+        assert_eq!(snake.orientation, Orientation::Left);
     }
 
     #[test]
-    fn it_reorientes_the_snake_when_redirect_orientation_is_called_to_the_direction() {
+    fn it_reorientes_the_snake_when_redirect_orientation_is_called_to_the_direction_given() {
         let mut snake = Snake::new(2, 2);
 
-        assert_eq!(snake.is_moving, Orientation::Left);
         snake.redirect_orientation(Orientation::Right);
-        assert_eq!(snake.is_moving, Orientation::Right);
+        assert_eq!(snake.orientation, Orientation::Right);
     }
 
     // TODO: add test cases to test for collisions
@@ -103,17 +102,8 @@ mod tests {
     fn it_adds_a_body_part_when_the_snake_is_moving_left() {
         let mut snake = Snake::new(100, 100);
 
-        assert_eq!(Orientation::Left, snake.is_moving);
         snake.add_body_part();
         assert_eq!(snake.body[snake.body.len() - 1], (51, 50));
-    }
-
-    #[test]
-    fn it_adds_a_body_part_to_the_snake() {
-        let mut snake = Snake::new(10, 10);
-
-        snake.add_body_part();
-        assert_eq!(snake.body[snake.body.len() - 1], (6, 5));
     }
 
     #[test]

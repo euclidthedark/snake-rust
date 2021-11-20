@@ -92,8 +92,22 @@ mod tests {
     fn it_reorientes_the_snake_when_redirect_orientation_is_called_to_the_direction_given() {
         let mut snake = Snake::new(2, 2);
 
+        // reorient right
         snake.redirect_orientation(Orientation::Right);
         assert_eq!(snake.orientation, Orientation::Right);
+
+        // reorient left
+        snake.redirect_orientation(Orientation::Left);
+        assert_eq!(snake.orientation, Orientation::Left);
+
+
+        // reorient up
+        snake.redirect_orientation(Orientation::Up);
+        assert_eq!(snake.orientation, Orientation::Up);
+
+        // reorient down
+        snake.redirect_orientation(Orientation::Down);
+        assert_eq!(snake.orientation, Orientation::Down);
     }
 
     // TODO: add test cases to test for collisions

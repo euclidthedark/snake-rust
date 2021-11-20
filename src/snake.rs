@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 #[derive(PartialEq, Debug)]
 pub enum Orientation {
     Up,
@@ -35,16 +37,18 @@ impl Snake {
      */
 
     pub fn add_body_part(&mut self) -> Option<(i32, i32)> {
-        // TODO: perform a coordinate search to make sure body
-        // part addition does not collide with other body parts
-        let (x, y) = self.body[self.body.len() - 1];
+        let mut coordinate_map: HashMap<i32, HashSet<i32>> = HashMap::new();
 
-        if self.orientation == Orientation::Left {
-            self.body.push((x + 1, y));
-            return Some((x + 1, y));
-        } else {
-            return None;
+        for (x, y) in self.body {
+            if coordinate_map.contains_key(&x) {
+                let y_set = coordinate_map.get_mut(&x);
+                y_set.insert(&mut y);
+            } else {
+                coordinate_map.insert(x, mut HashSet::new());
+            }
         }
+
+        None
     }
 
     pub fn take_health(&mut self) {
@@ -110,14 +114,14 @@ mod tests {
         assert_eq!(snake.orientation, Orientation::Down);
     }
 
-    // TODO: add test cases to test for collisions
-    // Add tests for when None is returned
     #[test]
-    fn it_adds_a_body_part_when_the_snake_is_moving_left() {
-        let mut snake = Snake::new(100, 100);
+    fn it_adds_a_body_part_when_moving_left_without_collisions() {
+        let mut snake = Snake::new(20, 20);
 
+        // snake orientation defaults to the left
+        // when there is no body part in the next slot to the right
         snake.add_body_part();
-        assert_eq!(snake.body[snake.body.len() - 1], (51, 50));
+        assert_eq!(snake.body.len(), 3);
     }
 
     #[test]

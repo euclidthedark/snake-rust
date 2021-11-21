@@ -27,25 +27,37 @@ impl Snake {
     }
 
     pub fn redirect_orientation(&mut self, direction: Orientation) {
-        self.orientation = direction;
+        if self.body.len() > 1
+        && self.orientation == Orientation::Left
+        && direction == Orientation::Right {
+            ()
+        } else if self.body.len() > 1
+        && self.orientation == Orientation::Right
+        && direction == Orientation::Left {
+            ()
+        } else { self.orientation = direction }
     }
 
-    /**
-     * 1) Create a hash map for (x, y)'s
-     * 2) Create a body part based on the snakes motion orientation, derived from
-     * the coordinate hash map
-     */
-
     pub fn add_body_part(&mut self) -> Result<(i32, i32), &str> {
-        let coordinate_set: HashSet<(i32, i32)> = self.body.iter().cloned().collect();
+        let coordinate_cant_be_added_error = "Coordinate can't be appened to body.";
 
         match self.orientation {
             Orientation::Left => if let Some((last_x, last_y)) = self.body.clone().last() {
                 self.body.push((*last_x + 1, *last_y));
                 Ok((*last_x + 1, *last_y))
-            } else {
-                Err("Coordinate can't be appened to body.")
-            },
+            } else { Err(coordinate_cant_be_added_error) },
+            Orientation::Right => if let Some((last_x, last_y)) = self.body.clone().last() {
+                self.body.push((*last_x - 1, *last_y));
+                Ok((*last_x - 1, *last_y))
+            } else { Err(coordinate_cant_be_added_error) },
+            Orientation::Up => if let Some((last_x, last_y)) = self.body.clone().last() {
+                self.body.push((*last_x, *last_y + 1));
+                Ok((*last_x, *last_y + 1))
+            } else { Err(coordinate_cant_be_added_error) },
+            Orientation::Down => if let Some((last_x, last_y)) = self.body.clone().last() {
+                self.body.push((*last_x, *last_y - 1));
+                Ok((*last_x, *last_y - 1))
+            } else { Err(coordinate_cant_be_added_error) },
             _ => Err("snake.oriented must be set, and it isn't set."),
         }
     }
@@ -114,15 +126,43 @@ mod tests {
     }
 
     #[test]
+    fn it_will_not_let_you_reoriente_from_left_to_right_when_length_is_greater_than_1() {
+        let mut snake = Snake::new(100, 100);
+        assert_eq!(Ok((51, 50)), snake.add_body_part());
+        snake.redirect_orientation(Orientation::Right);
+        assert_eq!(snake.orientation, Orientation::Left);
+    }
+
+    #[test]
     fn it_adds_a_body_part_when_moving_left_without_collisions() {
         let mut snake = Snake::new(20, 20);
 
         // snake orientation defaults to the left
-        // when there is no body part in the next slot to the right
+        // when there isn't a collision
         assert_eq!(Ok((11, 10)), snake.add_body_part());
         assert_eq!(Some(&(11, 10)), snake.body.last());
 
         // oriente the snake right 
+        // and when there isn't a collision
+        snake.body = vec![(10, 10)];
+        snake.redirect_orientation(Orientation::Right);
+        assert_eq!(Ok((9, 10)), snake.add_body_part());
+        assert_eq!(Some(&(9, 10)), snake.body.last());
+
+        // oriente the snake up
+        // and when there isn't a collision
+        snake.body = vec![(10, 10)];
+        snake.redirect_orientation(Orientation::Up);
+        assert_eq!(Ok((10, 11)), snake.add_body_part());
+        assert_eq!(Some(&(10, 11)), snake.body.last());
+
+        // oriente the snake down
+        // and when there isn't a collision
+        snake.body = vec![(10, 10)];
+        snake.redirect_orientation(Orientation::Down);
+        assert_eq!(Ok((10, 9)), snake.add_body_part());
+        assert_eq!(Some(&(10, 9)), snake.body.last());
+
     }
 
     #[test]

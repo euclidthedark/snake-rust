@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 #[derive(PartialEq, Debug)]
 pub enum Orientation {
     Up,
@@ -58,16 +56,7 @@ impl Snake {
                 self.body.push((*last_x, *last_y - 1));
                 Ok((*last_x, *last_y - 1))
             } else { Err(coordinate_cant_be_added_error) },
-            _ => Err("snake.oriented must be set, and it isn't set."),
         }
-    }
-
-    pub fn take_health(&mut self) {
-        self.health -= 1;
-    }
-
-    pub fn eat_food(&mut self) {
-        self.food_eaten_count += 1;
     }
 }
 
@@ -134,7 +123,7 @@ mod tests {
     }
 
     #[test]
-    fn it_adds_a_body_part_when_moving_left_without_collisions() {
+    fn it_adds_a_body_part_when_moving_without_collisions() {
         let mut snake = Snake::new(20, 20);
 
         // snake orientation defaults to the left
@@ -163,22 +152,6 @@ mod tests {
         assert_eq!(Ok((10, 9)), snake.add_body_part());
         assert_eq!(Some(&(10, 9)), snake.body.last());
 
-    }
-
-    #[test]
-    fn it_takes_away_one_health_point() {
-        let mut snake = Snake::new(2, 2);
-        snake.take_health();
-
-        assert_eq!(snake.health, 2);
-    }
-
-    #[test]
-    fn it_eats_food() {
-        let mut snake = Snake::new(2, 2);
-        snake.eat_food();
-        snake.eat_food();
-
-        assert_eq!(snake.food_eaten_count, 2);
+        // set up collision cases
     }
 }

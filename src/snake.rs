@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 #[derive(PartialEq, Debug)]
 pub enum Orientation {
@@ -36,19 +36,18 @@ impl Snake {
      * the coordinate hash map
      */
 
-    pub fn add_body_part(&mut self) -> Option<(i32, i32)> {
-        let mut coordinate_map: HashMap<i32, HashSet<i32>> = HashMap::new();
+    pub fn add_body_part(&mut self) -> Result<(i32, i32), &str> {
+        let coordinate_set: HashSet<(i32, i32)> = self.body.iter().cloned().collect();
 
-        for (x, y) in self.body {
-            if coordinate_map.contains_key(&x) {
-                let y_set = coordinate_map.get_mut(&x);
-                y_set.insert(&mut y);
+        match self.orientation {
+            Orientation::Left => if let Some((last_x, last_y)) = self.body.clone().last() {
+                self.body.push((*last_x + 1, *last_y));
+                Ok((*last_x + 1, *last_y))
             } else {
-                coordinate_map.insert(x, mut HashSet::new());
-            }
+                Err("Coordinate can't be appened to body.")
+            },
+            _ => Err("snake.oriented must be set, and it isn't set."),
         }
-
-        None
     }
 
     pub fn take_health(&mut self) {
@@ -120,8 +119,10 @@ mod tests {
 
         // snake orientation defaults to the left
         // when there is no body part in the next slot to the right
-        snake.add_body_part();
-        assert_eq!(snake.body.len(), 3);
+        assert_eq!(Ok((11, 10)), snake.add_body_part());
+        assert_eq!(Some(&(11, 10)), snake.body.last());
+
+        // oriente the snake right 
     }
 
     #[test]

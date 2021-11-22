@@ -7,20 +7,15 @@ pub enum Orientation {
 }
 
 pub struct Snake {
-    health: u8,
     body: Vec<(i32, i32)>,
     orientation: Orientation,
-    food_eaten_count: u8,
 }
 
 impl Snake {
-    pub fn new(max_x: i32, max_y: i32) -> Snake {
-	// TODO:: store max coordinates in memory
+    pub fn new((x, y): (i32, i32)) -> Snake {
         Snake {
-            health: 3,
-            body: vec!((max_x / 2, max_y / 2)),
+            body: vec!((x, y)),
             orientation: Orientation::Left,
-            food_eaten_count: 0,
         }
     }
 
@@ -65,36 +60,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_creates_a_new_snake_with_correct_health() {
-        let snake = Snake::new(2, 2);
-
-        assert_eq!(snake.health, 3);
-    }
-
-    #[test]
     fn it_creates_a_new_snake_with_one_body_part() {
-        let snake = Snake::new(2, 2);
+        let snake = Snake::new((1, 1));
 
         assert_eq!(snake.body.len(), 1);
     }
 
     #[test]
-    fn it_creates_a_new_snake_with_one_body_part_in_the_center() {
-        let snake = Snake::new(2, 2);
-
-        assert_eq!(snake.body[0], (1, 1));
-    }
-
-    #[test]
     fn it_creates_a_new_snake_that_is_moving_left() {
-        let snake = Snake::new(2, 2);
+        let snake = Snake::new((1, 1));
 
         assert_eq!(snake.orientation, Orientation::Left);
     }
 
     #[test]
     fn it_reorientes_the_snake_when_redirect_orientation_is_called_to_the_direction_given() {
-        let mut snake = Snake::new(2, 2);
+        let mut snake = Snake::new((1, 1));
 
         // reorient right
         snake.redirect_orientation(Orientation::Right);
@@ -116,15 +97,17 @@ mod tests {
 
     #[test]
     fn it_will_not_let_you_reoriente_from_left_to_right_when_length_is_greater_than_1() {
-        let mut snake = Snake::new(100, 100);
+        let mut snake = Snake::new((50, 50));
+
         assert_eq!(Ok((51, 50)), snake.add_body_part());
+
         snake.redirect_orientation(Orientation::Right);
         assert_eq!(snake.orientation, Orientation::Left);
     }
 
     #[test]
     fn it_adds_a_body_part_when_moving_without_collisions() {
-        let mut snake = Snake::new(20, 20);
+        let mut snake = Snake::new((10, 10));
 
         // snake orientation defaults to the left
         // when there isn't a collision

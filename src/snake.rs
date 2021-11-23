@@ -11,6 +11,17 @@ pub struct Snake {
     orientation: Orientation,
 }
 
+fn assign_body_part(body: &Snake) -> Option<(i32, i32)> {
+    let number_of_moves = 4;
+    let mut coordinate_to_add = None;
+
+    for _ in 0..4 {
+
+    }
+
+    coordinate_to_add
+}
+
 impl Snake {
     pub fn new((x, y): (i32, i32)) -> Snake {
         Snake {
@@ -31,27 +42,7 @@ impl Snake {
         } else { self.orientation = direction }
     }
 
-    pub fn add_body_part(&mut self) -> Result<(i32, i32), &str> {
-        let coordinate_cant_be_added_error = "Coordinate can't be appened to body.";
-
-        match self.orientation {
-            Orientation::Left => if let Some((last_x, last_y)) = self.body.clone().last() {
-                self.body.push((*last_x + 1, *last_y));
-                Ok((*last_x + 1, *last_y))
-            } else { Err(coordinate_cant_be_added_error) },
-            Orientation::Right => if let Some((last_x, last_y)) = self.body.clone().last() {
-                self.body.push((*last_x - 1, *last_y));
-                Ok((*last_x - 1, *last_y))
-            } else { Err(coordinate_cant_be_added_error) },
-            Orientation::Up => if let Some((last_x, last_y)) = self.body.clone().last() {
-                self.body.push((*last_x, *last_y + 1));
-                Ok((*last_x, *last_y + 1))
-            } else { Err(coordinate_cant_be_added_error) },
-            Orientation::Down => if let Some((last_x, last_y)) = self.body.clone().last() {
-                self.body.push((*last_x, *last_y - 1));
-                Ok((*last_x, *last_y - 1))
-            } else { Err(coordinate_cant_be_added_error) },
-        }
+    pub fn add_body_part(&mut self) -> Result<(i32, i32), String> {
     }
 }
 

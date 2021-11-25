@@ -1,3 +1,5 @@
+use std::collections::{HashSet};
+
 #[derive(PartialEq, Debug)]
 pub enum Orientation {
     Up,
@@ -9,17 +11,6 @@ pub enum Orientation {
 pub struct Snake {
     body: Vec<(i32, i32)>,
     orientation: Orientation,
-}
-
-fn assign_body_part(body: &Snake) -> Option<(i32, i32)> {
-    let number_of_moves = 4;
-    let mut coordinate_to_add = None;
-
-    for _ in 0..4 {
-
-    }
-
-    coordinate_to_add
 }
 
 impl Snake {
@@ -42,7 +33,41 @@ impl Snake {
         } else { self.orientation = direction }
     }
 
-    pub fn add_body_part(&mut self) -> Result<(i32, i32), String> {
+    pub fn add_body_part(&mut self) -> Result<(i32 ,i32), &str> {
+        let collision_message = "Collision when trying to append body part after the tail.";
+        let coordiantes: HashSet<(i32, i32)> = self.body
+            .clone()
+            .into_iter()
+            .collect();
+
+        if let Some((last_x, last_y)) = self.body.clone().last() {
+            match self.orientation {
+                Orientation::Left => {
+                    if !coordiantes.contains(&(*last_x - 1, *last_y)) {
+                        self.body.push((*last_x - 1, *last_y));
+                        Ok((last_x - 1, *last_y))
+                    } else { Err(collision_message) }
+                },
+                Orientation::Right => {
+                    if !coordiantes.contains(&(*last_x + 1, *last_y)) {
+                        self.body.push((*last_x + 1, *last_y));
+                        Ok((last_x + 1, *last_y))
+                    } else { Err(collision_message) }
+                },
+                Orientation::Up => {
+                    if !coordiantes.contains(&(*last_x, *last_y + 1)) {
+                        self.body.push((*last_x, *last_y + 1));
+                        Ok((*last_x, *last_y + 1))
+                    } else { Err(collision_message) }
+                },
+                Orientation::Down => {
+                    if !coordiantes.contains(&(*last_x, *last_y - 1)) {
+                        self.body.push((*last_x, *last_y - 1));
+                        Ok((*last_x, *last_y - 1))
+                    } else { Err(collision_message) }
+                },
+            }
+        } else { Err("No body parts exist on snake.") }
     }
 }
 
@@ -64,68 +89,45 @@ mod tests {
         assert_eq!(snake.orientation, Orientation::Left);
     }
 
-    #[test]
-    fn it_reorientes_the_snake_when_redirect_orientation_is_called_to_the_direction_given() {
-        let mut snake = Snake::new((1, 1));
-
-        // reorient right
-        snake.redirect_orientation(Orientation::Right);
-        assert_eq!(snake.orientation, Orientation::Right);
-
-        // reorient left
-        snake.redirect_orientation(Orientation::Left);
-        assert_eq!(snake.orientation, Orientation::Left);
-
-
-        // reorient up
-        snake.redirect_orientation(Orientation::Up);
-        assert_eq!(snake.orientation, Orientation::Up);
-
-        // reorient down
-        snake.redirect_orientation(Orientation::Down);
-        assert_eq!(snake.orientation, Orientation::Down);
-    }
-
-    #[test]
-    fn it_will_not_let_you_reoriente_from_left_to_right_when_length_is_greater_than_1() {
-        let mut snake = Snake::new((50, 50));
-
-        assert_eq!(Ok((51, 50)), snake.add_body_part());
-
-        snake.redirect_orientation(Orientation::Right);
-        assert_eq!(snake.orientation, Orientation::Left);
-    }
-
+    // TODO: make the collision cases magic
     #[test]
     fn it_adds_a_body_part_when_moving_without_collisions() {
+        let collision_message = "Collision when trying to append body part after the tail.";
         let mut snake = Snake::new((10, 10));
 
-        // snake orientation defaults to the left
-        // when there isn't a collision
-        assert_eq!(Ok((11, 10)), snake.add_body_part());
-        assert_eq!(Some(&(11, 10)), snake.body.last());
-
-        // oriente the snake right 
-        // and when there isn't a collision
-        snake.body = vec![(10, 10)];
-        snake.redirect_orientation(Orientation::Right);
+        // add a body part while moving left
         assert_eq!(Ok((9, 10)), snake.add_body_part());
         assert_eq!(Some(&(9, 10)), snake.body.last());
-
-        // oriente the snake up
-        // and when there isn't a collision
+        // if the coordinate to the body already exists
+        snake.body.push((10, 10));
+        assert_eq!(Err(collision_message), snake.add_body_part());
+        // reset snake
         snake.body = vec![(10, 10)];
-        snake.redirect_orientation(Orientation::Up);
+        snake.orientation = Orientation::Right;
+        // add a body part while moving right
+        assert_eq!(Ok((11, 10)), snake.add_body_part());
+        assert_eq!(Some(&(11, 10)), snake.body.last());
+        // if the coordinate to the body already exists
+        snake.body.push((10, 10));
+        assert_eq!(Err(collision_message), snake.add_body_part());
+        // reset snake
+        snake.body = vec![(10, 10)];
+        snake.orientation = Orientation::Up;
+        // add a body part while moving up
         assert_eq!(Ok((10, 11)), snake.add_body_part());
         assert_eq!(Some(&(10, 11)), snake.body.last());
-
-        // oriente the snake down
-        // and when there isn't a collision
+        // if the coordinate to the body already exists
+        snake.body.push((10, 10));
+        assert_eq!(Err(collision_message), snake.add_body_part());
+        // reset snake
         snake.body = vec![(10, 10)];
-        snake.redirect_orientation(Orientation::Down);
+        snake.orientation = Orientation::Down;
+        // add a body part while moving up
         assert_eq!(Ok((10, 9)), snake.add_body_part());
         assert_eq!(Some(&(10, 9)), snake.body.last());
+        // if the coordinate to the body already exists
+        snake.body.push((10, 10));
+        assert_eq!(Err(collision_message), snake.add_body_part());
 
-        // set up collision cases
     }
 }

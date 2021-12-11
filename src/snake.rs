@@ -17,6 +17,11 @@ fn derive_coordinate_from_direction((x, y): (&i32, &i32), direction: &Orientatio
     }
 }
 
+fn is_reflecting_across_y_axis(snake: &mut Snake, direction_to_go: &Orientation) -> bool {
+    (snake.orientation == Orientation::Left && *direction_to_go == Orientation::Right)
+        || (snake.orientation == Orientation::Right && *direction_to_go == Orientation::Left)
+}
+
 pub struct Snake {
     body: Vec<(i32, i32)>,
     orientation: Orientation,
@@ -31,6 +36,14 @@ impl Snake {
     }
 
     // TODO: Write reoriente function
+    pub fn reoriente_snake(&mut self, reoriente_direction: Orientation) -> Option<()> {
+        if self.body.len() == 2 && is_reflecting_across_y_axis(self, &reoriente_direction) {
+            None
+        } else {
+            self.orientation = reoriente_direction;
+            Some(())
+        }
+    }
 
     // TODO: clean up add_body_parts with type checking
     pub fn add_body_part(&mut self) -> Result<(i32 ,i32), &str> {
@@ -78,6 +91,38 @@ mod tests {
         let snake = Snake::new((1, 1));
 
         assert_eq!(snake.orientation, Orientation::Left);
+    }
+
+    #[test]
+    fn it_reorientes_the_snake() {
+        let mut snake = Snake::new((10, 10));
+
+        // reorient right
+        assert_eq!(Some(()), snake.reoriente_snake(Orientation::Right));
+        assert_eq!(snake.orientation, Orientation::Right);
+
+        // reorient left
+        assert_eq!(Some(()), snake.reoriente_snake(Orientation::Left));
+        assert_eq!(snake.orientation, Orientation::Left);
+
+        // reorient up
+        assert_eq!(Some(()), snake.reoriente_snake(Orientation::Up));
+        assert_eq!(snake.orientation, Orientation::Up);
+
+        // reorient down
+        assert_eq!(Some(()), snake.reoriente_snake(Orientation::Down));
+        assert_eq!(snake.orientation, Orientation::Down);
+
+        // reorient left when the body has two parts
+        assert_eq!(Some(()), snake.reoriente_snake(Orientation::Left));
+        assert_eq!(Ok((11, 10)), snake.add_body_part());
+        assert_eq!(None, snake.reoriente_snake(Orientation::Right));
+
+        // reorient right when the body has two parts
+        snake.body = vec![(10, 10)];
+        assert_eq!(Some(()), snake.reoriente_snake(Orientation::Right));
+        assert_eq!(Ok((9, 10)), snake.add_body_part());
+        assert_eq!(None, snake.reoriente_snake(Orientation::Left));
     }
 
     #[test]

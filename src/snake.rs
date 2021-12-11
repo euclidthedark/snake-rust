@@ -30,6 +30,9 @@ impl Snake {
         }
     }
 
+    // TODO: Write reoriente function
+
+    // TODO: clean up add_body_parts with type checking
     pub fn add_body_part(&mut self) -> Result<(i32 ,i32), &str> {
         let collision_message = "Collision when trying to append body part after the tail.";
         let coordinates: HashSet<(i32, i32)> = self.body
@@ -77,10 +80,8 @@ mod tests {
         assert_eq!(snake.orientation, Orientation::Left);
     }
 
-    // TODO: make the collision cases magic
     #[test]
     fn it_adds_a_body_part_when_moving_without_collisions() {
-        let collision_message = "Collision when trying to append body part after the tail.";
         let mut snake = Snake::new((10, 10));
 
         // when going left
@@ -106,6 +107,7 @@ mod tests {
         snake.orientation = Orientation::Up;
         assert_eq!(Ok((10, 9)), snake.add_body_part());
         assert_eq!(Some(&(10, 9)), snake.body.last());
-
     }
+    
+    // TODO: Make sure the snake doesn't collied with body part
 }

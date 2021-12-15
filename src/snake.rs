@@ -8,6 +8,7 @@ pub enum Orientation {
     Right,
 }
 
+// tested in the struct method
 fn derive_coordinate_from_direction((x, y): (&i32, &i32), direction: &Orientation) -> (i32, i32) {
     match direction {
         Orientation::Up => (*x, *y - 1),
@@ -15,6 +16,24 @@ fn derive_coordinate_from_direction((x, y): (&i32, &i32), direction: &Orientatio
         Orientation::Down => (*x, *y + 1),
         Orientation::Left => (*x + 1, *y)
     }
+}
+
+fn direction_of_adjacency((previuos_x, previous_y): &(i32, i32), (x, y): &(i32, i32)) -> Orientation {
+    if previuos_x < x { Orientation::Left }
+    else if previuos_x > x { Orientation::Right }
+    else {
+        if previous_y > y { Orientation::Up }
+        else { Orientation::Down }
+    }
+}
+
+#[test]
+fn it_returns_then_correct_coordinate_adjacency_direction() {
+    // it returns left
+    assert_eq!(direction_of_adjacency(&(1, 2), &(2, 2)), Orientation::Left);
+    assert_eq!(direction_of_adjacency(&(4, 2), &(3, 2)), Orientation::Right);
+    assert_eq!(direction_of_adjacency(&(3, 3), &(3, 2)), Orientation::Up);
+    assert_eq!(direction_of_adjacency(&(3, 1), &(3, 2)), Orientation::Down);
 }
 
 fn is_reflecting_across_y_axis(snake: &mut Snake, direction_to_go: &Orientation) -> bool {

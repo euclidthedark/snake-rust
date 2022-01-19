@@ -122,12 +122,12 @@ impl Snake {
         }
     }
 
-    // TODO: Write reoriente function
     pub fn reoriente_snake(&mut self, reoriente_direction: Orientation) -> Option<()> {
         if self.body.len() == 2 && is_reflecting_across_y_axis(self, &reoriente_direction) {
             None
         } else {
             self.orientation = reoriente_direction;
+            self.body = move_snake(&mut self.body, &self.orientation);
             Some(())
         }
     }
@@ -201,13 +201,13 @@ mod tests {
 
         // reorient left when the body has two parts
         assert_eq!(Some(()), snake.reoriente_snake(Orientation::Left));
-        assert_eq!(Ok((11, 10)), snake.add_body_part());
+        assert_eq!(Ok((10, 10)), snake.add_body_part());
         assert_eq!(None, snake.reoriente_snake(Orientation::Right));
 
         // reorient right when the body has two parts
         snake.body = vec![(10, 10)];
         assert_eq!(Some(()), snake.reoriente_snake(Orientation::Right));
-        assert_eq!(Ok((9, 10)), snake.add_body_part());
+        assert_eq!(Ok((10, 10)), snake.add_body_part());
         assert_eq!(None, snake.reoriente_snake(Orientation::Left));
     }
 
